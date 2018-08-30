@@ -37,5 +37,5 @@ Run the server
 java -server -Xmx4g -jar blazegraph.jar 
 ```
 
-Then, try some (queries)[src/main/resources/SPARQL], and analyze query speed at
+Then, try some [queries](src/main/resources/SPARQL), and analyze query speed at
 http://localhost:9999/blazegraph/#query .
