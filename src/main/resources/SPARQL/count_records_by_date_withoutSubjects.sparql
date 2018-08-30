@@ -1,0 +1,15 @@
+######################################
+# show num. docs NOT having subject assignments, per year
+######################################
+prefix dc: <http://purl.org/dc/elements/1.1/>
+prefix dcterm: <http://purl.org/dc/terms/>
+prefix dctype: <http://purl.org/dc/dcmitype/>
+#
+SELECT (count(?s) as ?tripleCount) ?date
+WHERE {
+  ?s dcterm:type dctype:Text ;
+     dc:date ?date .
+  MINUS {?s dc:subject ?c . }
+}
+GROUP BY ?date
+ORDER BY DESC(?tripleCount) ?date

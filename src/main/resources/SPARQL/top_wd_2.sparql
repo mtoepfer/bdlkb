@@ -1,0 +1,32 @@
+###
+#
+# USE MAPPING FROM STW TO WIKIDATA
+# https://github.com/zbw/stw-mappings/tree/master/var/wikidata
+# similarly to:
+# http://zbw.eu/beta/sparql-lab/?endpoint=http://zbw.eu/beta/sparql/stw/query&queryRef=https://api.github.com/repos/zbw/sparql-queries/contents/stw/wikidata_mapping.rq
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dcterm: <http://purl.org/dc/terms/>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX wd: <http://www.wikidata.org/entity/>
+#
+SELECT ?c ?stwId ?wd ?wdLabel
+WHERE {
+  ?doc dc:subject ?c ;
+       dc:title ?title .
+  # bind(uri('http://zbw.eu/stw/descriptor/18012-3') as ?c)
+  bind(strafter(str(?c), 'http://zbw.eu/stw/descriptor/') as ?stwId)
+  
+  service <https://query.wikidata.org/bigdata/namespace/wdq/sparql> {
+    ?statement ps:P3911 ?stwId .
+    ?wd p:P3911 ?statement .
+    
+    ?wd rdfs:label ?wdLabel .
+    filter(lang(?wdLabel) = 'en')
+  }
+}
+LIMIT 10

@@ -1,0 +1,35 @@
+###
+#
+# USE MAPPING TO WIKIDATA
+# https://github.com/zbw/stw-mappings/tree/master/var/wikidata
+# http://zbw.eu/beta/sparql-lab/?endpoint=http://zbw.eu/beta/sparql/stw/query&queryRef=https://api.github.com/repos/zbw/sparql-queries/contents/stw/wikidata_mapping.rq
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dcterm: <http://purl.org/dc/terms/>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX bdlkb: <http://www.zbw.eu/record/rdf#>
+#
+SELECT ?wd ?wdLabel ?c
+WHERE {
+  
+  service <https://query.wikidata.org/bigdata/namespace/wdq/sparql> {
+    ?wd p:P3911 ?statement .
+    ?statement ps:P3911 ?stwId .
+    filter(isLiteral(?stwId))
+    
+    ?wd rdfs:label ?wdLabel .
+    filter(lang(?wdLabel) = 'en')
+  }
+  bind(uri(concat('http://zbw.eu/stw/descriptor/', ?stwId)) as ?c)
+  
+  
+  ?doc dc:subject ?c ;
+       dc:title ?title .
+  VALUES (?doc) { (bdlkb:10000565242) (bdlkb:10000655214) (bdlkb:10000656767)}
+}
+LIMIT 1

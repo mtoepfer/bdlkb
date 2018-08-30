@@ -1,0 +1,7 @@
+prefix dc: <http://purl.org/dc/elements/1.1/>
+prefix dcterm: <http://purl.org/dc/terms/>
+prefix dctype: <http://purl.org/dc/dcmitype/>
+SELECT (count(?s) as ?tripleCount)
+WHERE {
+  ?s dcterm:type dctype:Text .
+}

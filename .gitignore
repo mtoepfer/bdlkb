@@ -1,0 +1,11 @@
+.classpath
+.settings
+.project
+target
+out
+tmp
+dependency-reduced-pom.xml
+README.html
+*_local.*
+src/main/resources/dump_transform.properties
+**/sandbox

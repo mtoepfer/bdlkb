@@ -1,0 +1,3 @@
+output = $filename.ttl
+zip = $zipfile.zip
+zip_subfile = $filename.json

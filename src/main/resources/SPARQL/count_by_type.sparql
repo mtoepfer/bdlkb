@@ -1,0 +1,17 @@
+prefix dc: <http://purl.org/dc/elements/1.1/>
+prefix dcterm: <http://purl.org/dc/terms/>
+prefix dctype: <http://purl.org/dc/dcmitype/>
+
+SELECT (count(?s) as ?tripleCount) ?type ?p
+WHERE {
+  {
+    ?s a ?type ;
+       ?p ?type .
+  }
+  UNION {
+    ?s dcterm:type ?type ;
+       ?p ?type .
+  }
+}
+GROUP BY ?type ?p
+ORDER BY DESC(?tripleCount)

@@ -1,0 +1,7 @@
+######################################
+SELECT (count(?s) as ?tripleCount) ?p
+WHERE {
+  ?s ?p ?o .
+}
+GROUP BY ?p
+ORDER BY DESC(?tripleCount) ?p

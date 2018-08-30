@@ -1,0 +1,11 @@
+#
+# only query wikidata:
+# inspect the most frequent types of the concepts that have been mapped to wikidata
+#
+SELECT (COUNT(DISTINCT ?item) AS ?count) ?ty ?tyLabel WHERE {
+  ?item wdt:P3911 ?o.
+  ?item wdt:P31 ?ty.
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+}
+GROUP BY ?ty ?tyLabel
+ORDER BY DESC(?count)

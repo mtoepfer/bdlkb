@@ -1,0 +1,31 @@
+######################################
+#
+# Query subject assignments where subject is narrower than ?thsys
+# - with some specific subthes level in between
+#
+prefix skos: <http://www.w3.org/2004/02/skos/core#>
+prefix dc: <http://purl.org/dc/elements/1.1/>
+prefix dcterm: <http://purl.org/dc/terms/>
+prefix dctype: <http://purl.org/dc/dcmitype/>
+prefix rec: <http://www.zbw.eu/record/rdf#>
+prefix stwx: <http://zbw.eu/namespaces/zbw-extensions/>
+SELECT ?subthes_label ?descriptor ?label ?doc ?title
+WHERE {
+  ?doc dcterm:type dctype:Text ;
+      dc:title ?title ;
+      dc:subject ?descriptor .
+  # W.01 Agriculture | http://zbw.eu/stw/thsys/71028
+  # P.01 Agricultural products | http://zbw.eu/stw/thsys/70071
+  # G.02 Asia | http://zbw.eu/stw/thsys/70148
+  <http://zbw.eu/stw/thsys/70071> skos:narrower ?subthes .
+  ?subthes a stwx:Thsys;
+           skos:prefLabel ?subthes_label ;
+           skos:narrower* ?descriptor .
+  # <http://zbw.eu/stw/descriptor/14054-0> skos:narrower* ?descriptor .
+  ?descriptor skos:prefLabel ?label .
+  FILTER(lang(?label) = 'en')
+  FILTER(lang(?subthes_label) = 'en')
+  FILTER(?descriptor != <http://zbw.eu/stw/descriptor/14054-0>)
+}
+LIMIT 100
+

@@ -1,0 +1,11 @@
+######################################
+######################################
+prefix dc: <http://purl.org/dc/elements/1.1/>
+prefix dcterm: <http://purl.org/dc/terms/>
+prefix dctype: <http://purl.org/dc/dcmitype/>
+
+SELECT ?thesaurus
+WHERE {
+  ?thesaurus dcterm:type <http://purl.org/nkos/terms/thesaurus> .
+}
+LIMIT 100
