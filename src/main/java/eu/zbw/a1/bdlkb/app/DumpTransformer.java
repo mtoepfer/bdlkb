@@ -18,6 +18,7 @@
 package eu.zbw.a1.bdlkb.app;
 
 import java.io.OutputStream;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -70,7 +71,7 @@ public class DumpTransformer {
 
     for (JsonObject jobj : (Iterable<JsonObject>) stream::iterator) {
       String econbizId = jobj.get("econbiz_id").getAsString();
-      Resource res = new URIImpl(CustomNameSpaces.LOCAL_RESOURCE_PREFIX + econbizId);
+      Resource res = CustomNameSpaces.constructResourceUri(econbizId);
 
       // SIMPLE FIELDS
       Statement stmtTitle = extractStatement(res, jobj, "title", DC.TITLE);
@@ -100,21 +101,51 @@ public class DumpTransformer {
 
       // SUBJECTs
       if (jobj.has("subject_stw")) {
-        // System.out.println(jobj);
-        Stream<String> subjStream = StreamSupport
-                .stream(jobj.get("subject_stw").getAsJsonArray().spliterator(), false)
-                .map(x -> (String) ((JsonObject) x).get("stw_id").getAsString());
-        for (String subjId : subjStream.collect(Collectors.toList())) {
+        List<String> subjList = collectArrayIds(jobj, "subject_stw", "stw_id");
+        for (String subjId : subjList) {
           wr.handleStatement(new StatementImpl(res, DC.SUBJECT,
-                  new URIImpl(CustomNameSpaces.STW_PREFIX + "descriptor/" + subjId)));
+                  CustomNameSpaces.constructStwDescriptorUri(subjId)));
         }
       }
       // if (jobj.has("classification_jel")) {
       // String jel = jobj.get("classification_jel").getAsString();
       // wr.handleStatement(new StatementImpl(res, DC.SUBJECT, f.createLiteral(jel)));
       // }
+
+      // SERIES / IS-PART-OF
+      if (jobj.has("series")) {
+        List<String> idList = collectArrayIds(jobj, "series", "econbiz_id");
+        for (String recordId : idList) {
+          wr.handleStatement(new StatementImpl(res, DCTERMS.IS_PART_OF,
+                  CustomNameSpaces.constructResourceUri(recordId)));
+        }
+      }
+      if (jobj.has("isPartOf")) {
+        List<String> idList = collectArrayIds(jobj, "isPartOf", "econbiz_id");
+        for (String recordId : idList) {
+          wr.handleStatement(new StatementImpl(res, DCTERMS.IS_PART_OF,
+                  CustomNameSpaces.constructResourceUri(recordId)));
+        }
+      }
+
+      // // // DEBUGGING...
+      // String debugKey = "isPartOf";
+      // if (jobj.has(debugKey)) {
+      // System.out.println(jobj);
+      // throw new RuntimeException();
+      // }
     }
     wr.endRDF();
+  }
+
+  private static List<String> collectArrayIds(JsonObject jobj, String arrKey, String arrSubIdKey) {
+    return streamArrayIds(jobj, arrKey, arrSubIdKey).collect(Collectors.toList());
+  }
+
+  private static Stream<String> streamArrayIds(JsonObject jobj, String arrKey, String arrSubIdKey) {
+    return StreamSupport.stream(jobj.get(arrKey).getAsJsonArray().spliterator(), false)
+            .filter(x -> ((JsonObject) x).has(arrSubIdKey))
+            .map(x -> (String) ((JsonObject) x).get(arrSubIdKey).getAsString());
   }
 
   public static Statement extractStatement(Resource res, JsonObject jobj, String key,

@@ -1,0 +1,26 @@
+##
+#
+# find collections where some related documents have subjects that are mapped to agrovoc
+#
+prefix dcterm: <http://purl.org/dc/terms/>
+prefix dc: <http://purl.org/dc/elements/1.1/>
+prefix skos: <http://www.w3.org/2004/02/skos/core#>
+prefix agrovoc: <http://aims.fao.org/aos/agrovoc>
+
+SELECT DISTINCT ?col ?short_title ?alabel ?elabel
+{
+  ?aconcept skos:inScheme <http://aims.fao.org/aos/agrovoc> ;
+      skos:prefLabel ?alabel ;
+      ?p ?stwconcept .
+  FILTER(LANG(?alabel) = 'en')
+  
+  ?stwconcept skos:inScheme <http://zbw.eu/stw> ;
+      skos:prefLabel ?elabel .
+  FILTER(LANG(?elabel) = 'en')
+  
+  ?doc dc:subject ?stwconcept ;
+       dcterm:isPartOf ?col .
+  ?col dc:title ?coltitle .
+  bind(substr(?coltitle, 0, 40) AS ?short_title)
+}
+LIMIT 10

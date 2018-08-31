@@ -17,6 +17,9 @@
 */
 package eu.zbw.a1.bdlkg.namespace;
 
+import org.openrdf.model.URI;
+import org.openrdf.model.impl.URIImpl;
+
 /**
  * 
  * @author Toepfer Martin
@@ -29,5 +32,14 @@ public class CustomNameSpaces {
    */
   public static final String STW_PREFIX = "http://zbw.eu/stw/";
 
+  public static URI constructStwDescriptorUri(String stwId) {
+    return new URIImpl(STW_PREFIX + "descriptor/" + stwId);
+  }
+
   public static final String LOCAL_RESOURCE_PREFIX = "http://www.zbw.eu/record/rdf#";
+
+  public static URI constructResourceUri(String recordId) {
+    return new URIImpl(LOCAL_RESOURCE_PREFIX + recordId);
+  }
+
 }

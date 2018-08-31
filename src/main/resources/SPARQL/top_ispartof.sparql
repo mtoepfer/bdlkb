@@ -1,0 +1,11 @@
+PREFIX dcterm: <http://purl.org/dc/terms/>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dctype: <http://purl.org/dc/dcmitype/>
+
+SELECT *
+WHERE
+{
+  ?doc dcterm:type dctype:Text ;
+       dcterm:isPartOf ?col .
+}
+LIMIT 10

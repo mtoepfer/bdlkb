@@ -1,0 +1,19 @@
+##
+#
+# find top largest collections
+#
+PREFIX dctype: <http://purl.org/dc/dcmitype/>
+prefix dcterm: <http://purl.org/dc/terms/>
+prefix dc: <http://purl.org/dc/elements/1.1/>
+prefix skos: <http://www.w3.org/2004/02/skos/core#>
+prefix agrovoc: <http://aims.fao.org/aos/agrovoc>
+
+SELECT (COUNT(?doc) AS ?ndoc) ?col ?col_title
+{
+  ?col dcterm:type dctype:Collection ;
+       dc:title ?col_title .
+  ?doc dcterm:isPartOf ?col .
+}
+GROUP BY ?col ?col_title
+ORDER BY DESC(?ndoc)
+LIMIT 10
