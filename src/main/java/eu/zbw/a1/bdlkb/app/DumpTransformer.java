@@ -18,7 +18,7 @@
 package eu.zbw.a1.bdlkb.app;
 
 import java.io.OutputStream;
-import java.util.List;
+import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -101,7 +101,7 @@ public class DumpTransformer {
 
       // SUBJECTs
       if (jobj.has("subject_stw")) {
-        List<String> subjList = collectArrayIds(jobj, "subject_stw", "stw_id");
+        Collection<String> subjList = collectArrayIds(jobj, "subject_stw", "stw_id");
         for (String subjId : subjList) {
           wr.handleStatement(new StatementImpl(res, DC.SUBJECT,
                   CustomNameSpaces.constructStwDescriptorUri(subjId)));
@@ -114,14 +114,14 @@ public class DumpTransformer {
 
       // SERIES / IS-PART-OF
       if (jobj.has("series")) {
-        List<String> idList = collectArrayIds(jobj, "series", "econbiz_id");
+        Collection<String> idList = collectArrayIds(jobj, "series", "econbiz_id");
         for (String recordId : idList) {
           wr.handleStatement(new StatementImpl(res, DCTERMS.IS_PART_OF,
                   CustomNameSpaces.constructResourceUri(recordId)));
         }
       }
       if (jobj.has("isPartOf")) {
-        List<String> idList = collectArrayIds(jobj, "isPartOf", "econbiz_id");
+        Collection<String> idList = collectArrayIds(jobj, "isPartOf", "econbiz_id");
         for (String recordId : idList) {
           wr.handleStatement(new StatementImpl(res, DCTERMS.IS_PART_OF,
                   CustomNameSpaces.constructResourceUri(recordId)));
@@ -138,8 +138,9 @@ public class DumpTransformer {
     wr.endRDF();
   }
 
-  private static List<String> collectArrayIds(JsonObject jobj, String arrKey, String arrSubIdKey) {
-    return streamArrayIds(jobj, arrKey, arrSubIdKey).collect(Collectors.toList());
+  private static Collection<String> collectArrayIds(JsonObject jobj, String arrKey,
+          String arrSubIdKey) {
+    return streamArrayIds(jobj, arrKey, arrSubIdKey).collect(Collectors.toSet());
   }
 
   private static Stream<String> streamArrayIds(JsonObject jobj, String arrKey, String arrSubIdKey) {
